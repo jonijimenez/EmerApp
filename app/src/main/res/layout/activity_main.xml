@@ -46,7 +46,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="loc"
+        android:text="location"
         android:id="@+id/button"
         android:layout_below="@+id/imageButton2"
         android:layout_toRightOf="@+id/imageButton"
