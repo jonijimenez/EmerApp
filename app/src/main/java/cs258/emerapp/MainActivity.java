@@ -24,8 +24,51 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, LocationMap.class));
             }
         });
+
+        contacts.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view){
+                Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
+                        Contacts.CONTENT_URI);
+                startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
+            }
+        });
     }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        ContentResolver cr = getContentResolver();
+        String name = "", phone = "";
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case CONTACT_PICKER_RESULT:
+                    // handle contact results
+                    Uri contactData = data.getData();
+                    Cursor c =  managedQuery(contactData, null, null, null, null);
+                    if (c.moveToFirst()) {
+                        name = c.getString(c.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
+                        String id = c.getString(c.getColumnIndex(ContactsContract.Contacts._ID));
+
+                        Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                                new String[]{id}, null);
+                        while (pCur.moveToNext()) {
+                            phone = pCur.getString(
+                                    pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                            Toast toast = Toast.makeText(this, name + " -> " + phone, Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+                        pCur.close();
+                    }
+                    Toast toast = Toast.makeText(this, name + " -> " + phone, Toast.LENGTH_SHORT);
+                    toast.show();
+                    break;
+            }
+
+        } else {
+            // gracefully handle failure
+            Toast toast = Toast.makeText(this, "Failure", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
