@@ -11,11 +11,12 @@ import android.widget.Button;
 
 
 public class MainActivity extends AppCompatActivity {
-
+    static GPSTracker gps;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        gps = new GPSTracker(MainActivity.this);
         Button location= (Button)findViewById(R.id.button);
         location.setOnClickListener(new View.OnClickListener() {
             @Override
